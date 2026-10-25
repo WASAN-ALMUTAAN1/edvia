@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0d281c">
+<title>إدڤيا | نسخة العرض التجريبية</title>
+<meta name="description" content="نسخة عرض تجريبية من منصة إدڤيا لإدارة التدريب التعاوني، تعمل ببيانات تجريبية داخل المتصفح.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap">
+<link rel="stylesheet" href="app.css">
+<style>
+  :root { --font-kau-alexandria: "Alexandria"; }
+  .demo-boot { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center; line-height: 1.9; font-family: "Alexandria", "Segoe UI", Tahoma, sans-serif; color: #0d281c; background: #f5f8f6; }
+  #root:not(:empty) + .demo-boot, .demo-boot[hidden] { display: none; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="demo-boot" id="demo-boot">جارٍ تحميل النسخة التجريبية...</div>
+<div id="demo-root"></div>
+<noscript><p style="padding:24px;font-family:sans-serif">تحتاج النسخة التجريبية إلى تفعيل JavaScript في المتصفح.</p></noscript>
+<script>
+  if (location.protocol === "file:") {
+    document.getElementById("demo-boot").textContent =
+      "تعمل النسخة التجريبية من رابطها بعد رفعها (GitHub Pages أو Netlify)، ولا يسمح المتصفح بتشغيلها من ملف على الجهاز مباشرة.";
+  }
+  new MutationObserver(function (records, observer) {
+    if (document.getElementById("root").childNodes.length) {
+      document.getElementById("demo-boot").hidden = true;
+      observer.disconnect();
+    }
+  }).observe(document.getElementById("root"), { childList: true });
+</script>
+<script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>إدڤيا | ملف من نسخة العرض</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; font-family: "Alexandria", "Segoe UI", Tahoma, sans-serif; background: #f5f8f6; color: #14231b; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: #0d281c; color: #fff; }
+  header span { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  header a { flex: none; color: #0d281c; background: #fff; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 700; text-decoration: none; }
+  header a:focus-visible { outline: 3px solid #df8034; outline-offset: 2px; }
+  main { flex: 1; display: flex; }
+  iframe, img { flex: 1; width: 100%; border: 0; background: #fff; }
+  img { object-fit: contain; }
+  p { margin: auto; max-width: 520px; padding: 24px; line-height: 1.9; text-align: center; }
+</style>
+</head>
+<body>
+<header><span id="name">ملف من نسخة العرض</span><a id="download" href="#" hidden>تنزيل الملف</a></header>
+<main id="view"><p id="message">جارٍ فتح الملف...</p></main>
+<script>
+  (async function () {
+    var params = new URLSearchParams(location.hash.slice(1));
+    var name = params.get("name") || "file";
+    var message = document.getElementById("message");
+    var download = document.getElementById("download");
+    document.getElementById("name").textContent = name;
+    document.title = "إدڤيا | " + name;
+    var blob = null;
+    try {
+      if (params.get("blob")) {
+        var source = params.get("blob");
+        if (source.indexOf("blob:" + location.origin + "/") !== 0) throw new Error("not a demo upload");
+        blob = await (await fetch(source)).blob();
+      } else if (params.get("path")) {
+        var index = await (await fetch("data/files.json")).json();
+        var item = index[params.get("path")];
+        if (!item) throw new Error("not in the demo");
+        var pack = await (await fetch("files.bin")).arrayBuffer();
+        blob = new Blob([pack.slice(item.offset, item.offset + item.length)], { type: item.type });
+      }
+    } catch (error) {
+      blob = null;
+    }
+    if (!blob) {
+      message.textContent = params.get("blob")
+        ? "الملفات المرفوعة في نسخة العرض تبقى متاحة داخل الصفحة التي رُفعت فيها فقط، ما دامت مفتوحة."
+        : "تعذر فتح هذا الملف في نسخة العرض.";
+      return;
+    }
+    var url = URL.createObjectURL(blob);
+    download.href = url;
+    download.download = name;
+    download.hidden = false;
+    var view = document.getElementById("view");
+    if (/^application\/pdf/.test(blob.type)) {
+      var frame = document.createElement("iframe");
+      frame.src = url;
+      frame.title = name;
+      view.replaceChildren(frame);
+    } else if (/^image\//.test(blob.type)) {
+      var image = document.createElement("img");
+      image.src = url;
+      image.alt = name;
+      view.replaceChildren(image);
+    } else {
+      message.textContent = "تم تجهيز الملف للتنزيل.";
+      download.click();
+    }
+  })();
+</script>
+</body>
+</html>
